@@ -1,5 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+<<<<<<< Updated upstream
 --- !u!1 &4477009897638601123
 GameObject:
   m_ObjectHideFlags: 0
@@ -31,6 +32,8 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5080122056455256512}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
+>>>>>>> Stashed changes
 --- !u!1 &9023264530912960540
 GameObject:
   m_ObjectHideFlags: 0
@@ -42,9 +45,13 @@ GameObject:
   - component: {fileID: 5080122056455256512}
   - component: {fileID: 806863478517202293}
   - component: {fileID: 5496437725008518860}
+<<<<<<< Updated upstream
   - component: {fileID: 6185368639164316868}
   - component: {fileID: -3592166246258038482}
   - component: {fileID: 1813185134966300760}
+=======
+  - component: {fileID: -3592166246258038482}
+>>>>>>> Stashed changes
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -64,8 +71,12 @@ Transform:
   m_LocalPosition: {x: -2.1774, y: -0.41, z: 0}
   m_LocalScale: {x: 0.5853, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
+<<<<<<< Updated upstream
   m_Children:
   - {fileID: 5226238228920026898}
+=======
+  m_Children: []
+>>>>>>> Stashed changes
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &806863478517202293
@@ -143,7 +154,11 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 3
+<<<<<<< Updated upstream
   m_Material: {fileID: 6200000, guid: 121be61ce8dd12b4a852b7e56c4d431b, type: 2}
+=======
+  m_Material: {fileID: 0}
+>>>>>>> Stashed changes
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -154,6 +169,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+<<<<<<< Updated upstream
 --- !u!61 &6185368639164316868
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -200,6 +216,8 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+=======
+>>>>>>> Stashed changes
 --- !u!114 &-3592166246258038482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,7 +230,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+<<<<<<< Updated upstream
   m_Actions: {fileID: -944628639613478452, guid: 808901d282100154da2e882af6a06cc1, type: 3}
+=======
+  m_Actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+>>>>>>> Stashed changes
   m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -227,6 +249,7 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
+<<<<<<< Updated upstream
   m_DefaultActionMap: Player1
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -249,3 +272,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+=======
+  m_DefaultActionMap: 
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
+>>>>>>> Stashed changes

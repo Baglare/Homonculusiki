@@ -15,6 +15,8 @@ public class PlayerController2D : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 moveInput;             // WASD / stick
     private bool jumpPressed;
+    public bool controlLocked;
+
 
     // Saldýrýlar için yön niyeti (8 yön) burada dursun:
     public Vector2 Aim => moveInput.sqrMagnitude > 0.01f ? moveInput.normalized : Vector2.right;
@@ -40,6 +42,8 @@ public class PlayerController2D : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (controlLocked) return;
+
         rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
 
         // Karakterin yönünü çevir (basit):
@@ -61,13 +65,13 @@ public class PlayerController2D : MonoBehaviour
         if (v.isPressed) jumpPressed = true;
     }
 
-    public void OnLight(InputValue v)
+    public void OnLightAttack(InputValue v)
     {
         if (!v.isPressed) return;
         Debug.Log($"{name} LIGHT | aim: {Aim}");
     }
 
-    public void OnHeavy(InputValue v)
+    public void OnHeavyAttack(InputValue v)
     {
         if (!v.isPressed) return;
         Debug.Log($"{name} HEAVY | aim: {Aim}");

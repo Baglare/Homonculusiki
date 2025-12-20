@@ -17,6 +17,10 @@ public class PlayerController2D : MonoBehaviour
     private bool jumpPressed;
     public bool controlLocked;
 
+    [Header("Facing Lock")]
+    public bool facingLock;
+    public int lockedFacing = 1;
+
 
     // Saldýrýlar için yön niyeti (8 yön) burada dursun:
     public Vector2 Aim => moveInput.sqrMagnitude > 0.01f ? moveInput.normalized : Vector2.right;
@@ -44,12 +48,21 @@ public class PlayerController2D : MonoBehaviour
     {
         if (controlLocked) return;
 
+        // hareket
         rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
 
-        // Karakterin yönünü çevir (basit):
-        if (moveInput.x > 0.01f) transform.localScale = new Vector3(1, 1, 1);
-        else if (moveInput.x < -0.01f) transform.localScale = new Vector3(-1, 1, 1);
+        // yön (flip) - facingLock varsa kilitli yönü bas
+        if (facingLock)
+        {
+            transform.localScale = new Vector3(lockedFacing, 1, 1);
+        }
+        else
+        {
+            if (moveInput.x > 0.01f) transform.localScale = new Vector3(1, 1, 1);
+            else if (moveInput.x < -0.01f) transform.localScale = new Vector3(-1, 1, 1);
+        }
     }
+
 
     private bool IsGrounded()
     {
@@ -68,13 +81,11 @@ public class PlayerController2D : MonoBehaviour
     public void OnLightAttack(InputValue v)
     {
         if (!v.isPressed) return;
-        Debug.Log($"{name} LIGHT | aim: {Aim}");
     }
 
     public void OnHeavyAttack(InputValue v)
     {
         if (!v.isPressed) return;
-        Debug.Log($"{name} HEAVY | aim: {Aim}");
     }
 
     public void OnSkill(InputValue v)

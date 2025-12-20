@@ -8,10 +8,23 @@ public class Hitbox2D : MonoBehaviour
     public Transform ownerTransform;
     public bool useTargetRelativeDirWhenNeutral = true;
     private bool active;
+    public BoxCollider2D col;
     private readonly System.Collections.Generic.HashSet<HealthKnockback> hitThisSwing =
         new System.Collections.Generic.HashSet<HealthKnockback>();
 
     [HideInInspector] public Vector2 knockDir = Vector2.right;
+
+    void Awake()
+    {
+        if (col == null) col = GetComponent<BoxCollider2D>();
+    }
+
+    public void ApplyMeleeShape(Vector2 size, Vector2 offset)
+    {
+        if (col == null) return;
+        col.size = size;
+        col.offset = offset;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {

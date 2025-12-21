@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 public enum AttackType { Lineer, Cevik, Genis, Duz }
 
 [CreateAssetMenu(menuName = "Fight/Attack Type Data")]
@@ -15,7 +14,12 @@ public class AttackTypeData : ScriptableObject
 
     [Header("Hit")]
     public int damage = 10;
-    public float forceMultiplier = 1.0f; // HealthKnockback'teki scaled ile çarpýlacak
+
+    // Asýl knockback gücü (Light/Heavy farký burada)
+    public float baseForce = 8f;
+
+    // (Ýstersen sonra multiplier mantýðýný geri koyarýz)
+    // public float forceMultiplier = 1.0f;
 
     [Header("Shape")]
     public Vector2 hitboxSize = new Vector2(1.0f, 0.8f);
@@ -24,4 +28,6 @@ public class AttackTypeData : ScriptableObject
     [Header("Genis only (3 phases)")]
     public float phaseActive = 0.06f;
     public float phaseGap = 0.04f;
+
+    // Genis için 3 faz kullanýyorsun ama "phaseActive/Gap" zaten var
 }

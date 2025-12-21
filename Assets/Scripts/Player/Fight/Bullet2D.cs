@@ -3,7 +3,8 @@ using UnityEngine;
 public class Bullet2D : MonoBehaviour
 {
     public int damage = 10;
-    public float forceMultiplier = 1f;
+    public float baseForce = 8f;
+
     public float speed = 14f;
     public float lifeTime = 1.2f;
 
@@ -11,9 +12,12 @@ public class Bullet2D : MonoBehaviour
 
     Vector2 dir;
 
-    public void Init(Vector2 direction, HealthKnockback owner, Transform ownerTf)
+    public void Init(Vector2 direction, HealthKnockback owner, Transform ownerTf, int dmg, float force)
     {
         dir = direction.normalized;
+
+        damage = dmg;
+        baseForce = force;
 
         if (hitbox == null) hitbox = GetComponent<Hitbox2D>();
         if (hitbox != null)
@@ -21,7 +25,7 @@ public class Bullet2D : MonoBehaviour
             hitbox.owner = owner;
             hitbox.ownerTransform = ownerTf;
             hitbox.damage = damage;
-            hitbox.knockForce = forceMultiplier;
+            hitbox.knockForce = baseForce;   // artýk multiplier deðil, gerçek force
             hitbox.knockDir = dir;
             hitbox.BeginSwing();
         }

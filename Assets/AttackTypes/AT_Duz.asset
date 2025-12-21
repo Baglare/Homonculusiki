@@ -17,8 +17,8 @@ MonoBehaviour:
   active: 0.1
   recovery: 0.18
   damage: 12
-  forceMultiplier: 1.1
-  hitboxSize: {x: 1, y: 0.8}
-  hitboxOffset: {x: 0.9, y: 0}
+  baseForce: 8
+  hitboxSize: {x: 1.4, y: 0.5}
+  hitboxOffset: {x: 1.6, y: 0}
   phaseActive: 0.06
   phaseGap: 0.04

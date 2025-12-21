@@ -1,35 +1,23 @@
+using System.Collections;
 using UnityEngine;
 
 public class HealthKnockback : MonoBehaviour
 {
+    [Header("HP")]
     public int maxHp = 100;
     public float knockbackMultiplier = 1f;
 
-    private int hp;
-    private Rigidbody2D rb;
+    int hp;
+    Rigidbody2D rb;
+
+    // HPBarFollow bunu okuyacak
+    public int CurrentHp => hp;
+    public int MaxHp => maxHp;
 
     [Header("Knockback Curve")]
     public float kbMin = 2.5f;        // HP fullken
-    public float kbMaxAtZero = 12f;   // HP 0 iken hedeflediðin max
-    public float kbCurvePower = 1.6f; // 1.0 lineer, >1 sonlara doðru hýzlanýr, <1 baþta agresif
-
-    public void TakeHit(int damage, Vector2 dir, float force)
-    {
-        hp = Mathf.Max(0, hp - damage);
-
-        float t = (maxHp - hp) / (float)maxHp;     // 0..1 (ne kadar hasar birikti)
-        float curved = Mathf.Pow(t, kbCurvePower); // eðri
-
-        float scaled = Mathf.Lerp(kbMin, kbMaxAtZero, curved);
-
-        // force burada saldýrý çarpaný: Light 1.0, Heavy 1.5 gibi
-        float finalForce = scaled * force * knockbackMultiplier;
-
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
-        rb.AddForce(dir.normalized * finalForce, ForceMode2D.Impulse);
-
-        StartCoroutine(LockControl(0.15f));
-    }
+    public float kbMaxAtZero = 12f;   // HP 0 iken
+    public float kbCurvePower = 1.6f; // 1=lineer, >1 sonlara doï¿½ru artar
 
     void Awake()
     {
@@ -37,7 +25,31 @@ public class HealthKnockback : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private System.Collections.IEnumerator LockControl(float t)
+    public void TakeHit(int damage, Vector2 dir, float force)
+    {
+        int before = hp;
+        hp = Mathf.Max(0, hp - damage);
+
+        // 0..1 (ne kadar hasar birikti)
+        float t = (maxHp - hp) / (float)maxHp;
+        float curved = Mathf.Pow(t, kbCurvePower);
+
+        float scaled = Mathf.Lerp(kbMin, kbMaxAtZero, curved);
+        float finalForce = scaled * force * knockbackMultiplier;
+
+        if (rb != null)
+        {
+            // Senin mantï¿½k: dï¿½ï¿½ey hï¿½z sï¿½fï¿½r, yatay kalsï¿½n
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+            rb.AddForce(dir.normalized * finalForce, ForceMode2D.Impulse);
+        }
+
+        StartCoroutine(LockControl(0.15f));
+
+        Debug.Log($"{name} TAKEHIT dmg={damage} hp(before)={before} hp(after)={hp} t={t:0.00} scaled={scaled:0.00} force={force:0.00} final={finalForce:0.00}", this);
+    }
+
+    IEnumerator LockControl(float t)
     {
         var pc = GetComponent<PlayerController2D>();
         if (pc == null) yield break;

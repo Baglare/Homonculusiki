@@ -3,100 +3,112 @@ using UnityEngine.InputSystem;
 
 public class PlayerController2D : MonoBehaviour
 {
+    [Header("Visual (ONLY this flips)")]
+    public Transform visual;
+
     [Header("Movement")]
     public float moveSpeed = 8f;
     public float jumpForce = 13f;
 
     [Header("Ground Check")]
-    public Transform groundCheck;          // boþ obje (ayaðýn altýna koyacaðýz)
+    public Transform groundCheck;
     public float groundCheckRadius = 0.12f;
     public LayerMask groundLayer;
-
-    private Rigidbody2D rb;
-    private Vector2 moveInput;             // WASD / stick
-    private bool jumpPressed;
-    public bool controlLocked;
 
     [Header("Facing Lock")]
     public bool facingLock;
     public int lockedFacing = 1;
 
+    [Header("Jump")]
+    public int maxJumps = 2;
+    int jumpsUsed = 0;
 
-    // Saldýrýlar için yön niyeti (8 yön) burada dursun:
-    public Vector2 Aim => moveInput.sqrMagnitude > 0.01f ? moveInput.normalized : Vector2.right;
+    Rigidbody2D rb;
+    Vector2 moveInput;
+    bool jumpPressed;
+    public bool controlLocked;
 
-    private void Awake()
+    int currentFacing = 1;
+
+    public int Facing => facingLock ? lockedFacing : currentFacing;
+
+    public Vector2 Aim
     {
-        rb = GetComponent<Rigidbody2D>();
+        get
+        {
+            if (moveInput.sqrMagnitude > 0.01f) return moveInput.normalized;
+            return (Facing == 1) ? Vector2.right : Vector2.left;
+        }
     }
 
-    private void Update()
+    void Awake()
     {
-        // Jump'ý Update'te “yut”uyoruz, FixedUpdate'te uygularýz.
-        if (jumpPressed)
+        rb = GetComponent<Rigidbody2D>();
+
+        // ROOT ASLA FLIPLENMEZ
+        transform.localScale = Vector3.one;
+
+        // Visual'Ä± otomatik bul (Inspector'a baÄŸlamayÄ± unutursan diye)
+        if (visual == null)
         {
-            if (IsGrounded())
+            var t = transform.Find("Visual");
+            if (t != null) visual = t;
+        }
+
+        // HÃ¢lÃ¢ yoksa: root'u flipleyip her ÅŸeyi bozmayalÄ±m, dummy yarat
+        if (visual == null)
+        {
+            var go = new GameObject("Visual");
+            go.transform.SetParent(transform, false);
+            visual = go.transform;
+        }
+    }
+
+    void Update()
+    {
+        if (IsGrounded()) jumpsUsed = 0;
+
+        if (jumpPressed && !controlLocked)
+        {
+            if (jumpsUsed < maxJumps)
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                jumpsUsed++;
             }
             jumpPressed = false;
         }
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
+        // Her ihtimale karÅŸÄ± root scale'i temiz tut
+        if (transform.localScale != Vector3.one) transform.localScale = Vector3.one;
+
         if (controlLocked) return;
 
-        // hareket
         rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
 
-        // yön (flip) - facingLock varsa kilitli yönü bas
-        if (facingLock)
+        if (!facingLock)
         {
-            transform.localScale = new Vector3(lockedFacing, 1, 1);
+            if (moveInput.x > 0.01f) currentFacing = 1;
+            else if (moveInput.x < -0.01f) currentFacing = -1;
         }
-        else
-        {
-            if (moveInput.x > 0.01f) transform.localScale = new Vector3(1, 1, 1);
-            else if (moveInput.x < -0.01f) transform.localScale = new Vector3(-1, 1, 1);
-        }
+
+        if (visual != null)
+            visual.localScale = new Vector3(Facing, 1f, 1f);
     }
 
-
-    private bool IsGrounded()
+    bool IsGrounded()
     {
         if (groundCheck == null) return false;
         return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
     }
 
-    // ---- INPUT SYSTEM: PlayerInput (Send Messages) ile otomatik çaðrýlýr ----
     public void OnMove(InputValue v) => moveInput = v.Get<Vector2>();
 
     public void OnJump(InputValue v)
     {
         if (v.isPressed) jumpPressed = true;
-    }
-
-    public void OnLightAttack(InputValue v)
-    {
-        if (!v.isPressed) return;
-    }
-
-    public void OnHeavyAttack(InputValue v)
-    {
-        if (!v.isPressed) return;
-    }
-
-    public void OnSkill(InputValue v)
-    {
-        if (!v.isPressed) return;
-        Debug.Log($"{name} SKILL | aim: {Aim}");
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (groundCheck == null) return;
-        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
 }

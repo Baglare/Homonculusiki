@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,8 +26,9 @@ public class AttackController : MonoBehaviour
         if (parry == null) parry = GetComponent<ParryState>();
         if (hk == null) hk = GetComponent<HealthKnockback>();
 
-        if (meleeHitbox == null) meleeHitbox = GetComponentInChildren<Hitbox2D>();
-        if (meleeCollider == null) meleeCollider = meleeHitbox != null ? meleeHitbox.GetComponent<BoxCollider2D>() : null;
+        // En saÄŸlamÄ±: inspector'dan baÄŸla. Yine de fallback kalsÄ±n:
+        if (meleeHitbox == null) meleeHitbox = GetComponentInChildren<Hitbox2D>(true);
+        if (meleeCollider == null && meleeHitbox != null) meleeCollider = meleeHitbox.GetComponent<BoxCollider2D>();
 
         if (meleeHitbox != null)
         {
@@ -40,24 +41,20 @@ public class AttackController : MonoBehaviour
 
     public void OnLightAttack(InputValue v)
     {
-        if (!v.isPressed) return;
-        if (busy || weapon == null || weapon.light == null) return;
+        if (!v.isPressed || busy) return;
+        if (weapon == null || weapon.light == null) return;
 
-        if (weapon.isProjectileLight)
-            FireProjectile(weapon.light);
-        else
-            StartCoroutine(DoMelee(weapon.light));
+        if (weapon.isProjectileLight) FireProjectile(weapon.light);
+        else StartCoroutine(DoMelee(weapon.light));
     }
 
     public void OnHeavyAttack(InputValue v)
     {
-        if (!v.isPressed) return;
-        if (busy || weapon == null || weapon.heavy == null) return;
+        if (!v.isPressed || busy) return;
+        if (weapon == null || weapon.heavy == null) return;
 
-        if (weapon.isProjectileHeavy)
-            FireProjectile(weapon.heavy);
-        else
-            StartCoroutine(DoMelee(weapon.heavy));
+        if (weapon.isProjectileHeavy) FireProjectile(weapon.heavy);
+        else StartCoroutine(DoMelee(weapon.heavy));
     }
 
     public void OnParry(InputValue v)
@@ -70,63 +67,37 @@ public class AttackController : MonoBehaviour
     {
         busy = true;
 
-        // Facing lock: saldýrý boyunca yön sabit
-        int facing = (transform.localScale.x < 0f) ? -1 : 1;
+        int facing = (move != null) ? move.Facing : 1;
+        bool neutral = (move == null) || (move.Aim.sqrMagnitude < 0.01f);
+
         if (move != null)
         {
             move.facingLock = true;
             move.lockedFacing = facing;
         }
 
-        // Melee þekil ayarý
         if (meleeHitbox != null)
         {
             meleeHitbox.damage = data.damage;
-            meleeHitbox.knockForce = data.forceMultiplier; // çarpan mantýðý
-            meleeHitbox.ApplyMeleeShape(data.hitboxSize, new Vector2(data.hitboxOffset.x * facing, data.hitboxOffset.y));
+            meleeHitbox.knockForce = data.baseForce;
+            meleeHitbox.neutralStrike = neutral;
+
+            Vector2 offset = new Vector2(data.hitboxOffset.x * facing, data.hitboxOffset.y);
+            meleeHitbox.ApplyMeleeShape(data.hitboxSize, offset);
+
+            meleeHitbox.knockDir = (facing == 1) ? Vector2.right : Vector2.left;
         }
 
-        // aim yoksa sað/sol kilitli yönden seç
-        Vector2 dir = (facing == 1) ? Vector2.right : Vector2.left;
-        if (meleeHitbox != null) meleeHitbox.knockDir = dir;
-
-        // STARTUP
         yield return new WaitForSeconds(data.startup);
 
-        if (data.type == AttackType.Genis)
-        {
-            // 3 faz: üst-orta-alt
-            Vector2[] dirs = new Vector2[]
-            {
-                new Vector2(facing,  1).normalized,
-                new Vector2(facing,  0).normalized,
-                new Vector2(facing, -1).normalized
-            };
+        if (meleeHitbox != null) meleeHitbox.BeginSwing();
+        if (meleeCollider != null) meleeCollider.enabled = true;
 
-            for (int i = 0; i < 3; i++)
-            {
-                meleeHitbox.knockDir = dirs[i];
+        yield return new WaitForSeconds(data.active);
 
-                meleeHitbox.BeginSwing();
-                meleeCollider.enabled = true;
-                yield return new WaitForSeconds(data.phaseActive);
-                meleeCollider.enabled = false;
-                meleeHitbox.EndSwing();
+        if (meleeCollider != null) meleeCollider.enabled = false;
+        if (meleeHitbox != null) meleeHitbox.EndSwing();
 
-                yield return new WaitForSeconds(data.phaseGap);
-            }
-        }
-        else
-        {
-            // tek faz
-            meleeHitbox.BeginSwing();
-            meleeCollider.enabled = true;
-            yield return new WaitForSeconds(data.active);
-            meleeCollider.enabled = false;
-            meleeHitbox.EndSwing();
-        }
-
-        // RECOVERY
         yield return new WaitForSeconds(data.recovery);
 
         if (move != null) move.facingLock = false;
@@ -137,17 +108,12 @@ public class AttackController : MonoBehaviour
     {
         if (bulletPrefab == null || muzzle == null) return;
 
-        int facing = (transform.localScale.x < 0f) ? -1 : 1;
+        int facing = (move != null) ? move.Facing : 1;
         Vector2 dir = (facing == 1) ? Vector2.right : Vector2.left;
 
         var go = Instantiate(bulletPrefab, muzzle.position, Quaternion.identity);
-
         var b = go.GetComponent<Bullet2D>();
         if (b != null)
-        {
-            b.damage = data.damage;
-            b.forceMultiplier = data.forceMultiplier;
-            b.Init(dir, hk, transform);
-        }
+            b.Init(dir, hk, transform, data.damage, data.baseForce);
     }
 }

@@ -340,17 +340,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &842065891 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9023264530912960540, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
+  m_PrefabInstance: {fileID: 1057203536488889629}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1232949088 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9023264530912960540, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
+  m_PrefabInstance: {fileID: 1507740297}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1389866449 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1456595587358918232, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
   m_PrefabInstance: {fileID: 1057203536488889629}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 842065891}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 391767b8847a20641b6264729050e41e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthKnockback
+--- !u!95 &1389866457
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842065891}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6dd8d414b068fa04bbb6550df21e2edf, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &1507740297
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -361,7 +393,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -3592166246258038482, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
       propertyPath: m_DefaultActionMap
-      value: f8db3ca2-f9e3-43b2-972e-c83c6732845e
+      value: Player2
       objectReference: {fileID: 0}
     - target: {fileID: 5080122056455256512, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -422,7 +454,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9023264530912960540, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1601990246}
+    - targetCorrespondingSourceObject: {fileID: 9023264530912960540, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1601990245}
   m_SourcePrefab: {fileID: 100100000, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
 --- !u!1001 &1534536405
 PrefabInstance:
@@ -562,12 +600,93 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1456595587358918232, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
   m_PrefabInstance: {fileID: 1507740297}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1232949088}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 391767b8847a20641b6264729050e41e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthKnockback
+--- !u!212 &1601990245
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232949088}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 3953187475017880540, guid: 1ef8f7198fc44ab418f13c30f18354c3, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!95 &1601990246
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232949088}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d71d208c6c36ca0409d6c3b166c42af2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1719812968
 GameObject:
   m_ObjectHideFlags: 0
@@ -953,7 +1072,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9023264530912960540, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1389866457}
   m_SourcePrefab: {fileID: 100100000, guid: 43d0f53f40464cd4abf4a91920dc785d, type: 3}
 --- !u!1001 &8017709786720312303
 PrefabInstance:

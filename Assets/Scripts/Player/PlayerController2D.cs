@@ -5,6 +5,7 @@ public class PlayerController2D : MonoBehaviour
 {
     [Header("Visual (ONLY this flips)")]
     public Transform visual;
+    public bool invertVisualFacing; // Ekledik: Eger karakterin cizimi sola bakiyorsa tickle
 
     [Header("Movement")]
     public float moveSpeed = 8f;
@@ -66,13 +67,17 @@ public class PlayerController2D : MonoBehaviour
 
     void Update()
     {
-        if (IsGrounded()) jumpsUsed = 0;
+        // Yerdeyken ve asagi dogru dusmuyorken (zaten ziplamisken tekrar yerdeymis gibi algilamasini onlemek icin)
+        if (IsGrounded() && rb.linearVelocity.y <= 0.1f) 
+        {
+            jumpsUsed = 0;
+        }
 
         if (jumpPressed && !controlLocked)
         {
             if (jumpsUsed < maxJumps)
             {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f); // Dikey hizi sifirla (double jump icin lazim)
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 jumpsUsed++;
             }
@@ -96,7 +101,12 @@ public class PlayerController2D : MonoBehaviour
         }
 
         if (visual != null)
-            visual.localScale = new Vector3(Facing, 1f, 1f);
+        {
+            // Eger Unity'deki bazi objelerin X ekseni zaten yone ters bakiyorsa objeyi tam tersine dondurebilir
+            // currentFacing ile localScale x duzgun ayarlanmistir
+            float flipMultiplier = invertVisualFacing ? -1f : 1f;
+            visual.localScale = new Vector3(Facing * flipMultiplier, 1f, 1f);
+        }
     }
 
     bool IsGrounded()

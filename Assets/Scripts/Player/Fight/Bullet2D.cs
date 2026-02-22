@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class Bullet2D : MonoBehaviour
 {
@@ -25,8 +25,9 @@ public class Bullet2D : MonoBehaviour
             hitbox.owner = owner;
             hitbox.ownerTransform = ownerTf;
             hitbox.damage = damage;
-            hitbox.knockForce = baseForce;   // artýk multiplier deðil, gerçek force
+            hitbox.knockForce = baseForce;   // artÄ±k multiplier deÄŸil, gerÃ§ek force
             hitbox.knockDir = dir;
+            hitbox.isProjectile = true; // NEW!
             hitbox.BeginSwing();
         }
 

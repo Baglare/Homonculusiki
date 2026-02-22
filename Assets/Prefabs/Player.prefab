@@ -442,7 +442,7 @@ MonoBehaviour:
   meleeCollider: {fileID: 0}
   parry: {fileID: 0}
   hk: {fileID: 0}
-  weapon: {fileID: 11400000, guid: bc1acfdde2e97174cbf9782a6e6ef459, type: 2}
+  weapon: {fileID: 11400000, guid: c28a4820883671c4faa8b6d31ce823d9, type: 2}
   muzzle: {fileID: 8919865586331388161}
   bulletPrefab: {fileID: 0}
 --- !u!114 &5289620575162944232

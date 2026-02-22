@@ -39,22 +39,22 @@ public class AttackController : MonoBehaviour
         if (meleeCollider != null) meleeCollider.enabled = false;
     }
 
-    public void OnLightAttack(InputValue v)
-    {
-        if (!v.isPressed || busy) return;
-        if (weapon == null || weapon.light == null) return;
-
-        if (weapon.isProjectileLight) FireProjectile(weapon.light);
-        else StartCoroutine(DoMelee(weapon.light));
-    }
-
     public void OnHeavyAttack(InputValue v)
     {
         if (!v.isPressed || busy) return;
         if (weapon == null || weapon.heavy == null) return;
 
-        if (weapon.isProjectileHeavy) FireProjectile(weapon.heavy);
-        else StartCoroutine(DoMelee(weapon.heavy));
+        if (weapon.isProjectileHeavy) FireProjectile(weapon.heavy, true);
+        else StartCoroutine(DoMelee(weapon.heavy, true));
+    }
+
+    public void OnLightAttack(InputValue v)
+    {
+        if (!v.isPressed || busy) return;
+        if (weapon == null || weapon.light == null) return;
+
+        if (weapon.isProjectileLight) FireProjectile(weapon.light, false);
+        else StartCoroutine(DoMelee(weapon.light, false));
     }
 
     public void OnParry(InputValue v)
@@ -63,11 +63,12 @@ public class AttackController : MonoBehaviour
         if (parry != null) parry.TryParry();
     }
 
-    IEnumerator DoMelee(AttackTypeData data)
+    IEnumerator DoMelee(AttackTypeData data, bool isHeavy)
     {
         busy = true;
 
-        int facing = (move != null) ? move.Facing : 1;
+        Vector2 aim = (move != null) ? move.Aim : new Vector2(1, 0);
+        int facing = aim.x >= 0 ? 1 : -1;
         bool neutral = (move == null) || (move.Aim.sqrMagnitude < 0.01f);
 
         if (move != null)
@@ -81,11 +82,18 @@ public class AttackController : MonoBehaviour
             meleeHitbox.damage = data.damage;
             meleeHitbox.knockForce = data.baseForce;
             meleeHitbox.neutralStrike = neutral;
+            meleeHitbox.isHeavy = isHeavy;
 
-            Vector2 offset = new Vector2(data.hitboxOffset.x * facing, data.hitboxOffset.y);
+            // Rotasyon yapildigi icin vector'u her zaman yone gore duz offset olarak belirle:
+            // Sola donukse bile 180 derece doneceginden hitbox sol tarafa duser. (facing ile carpmaya gerek yok)
+            Vector2 offset = new Vector2(data.hitboxOffset.x, data.hitboxOffset.y);
             meleeHitbox.ApplyMeleeShape(data.hitboxSize, offset);
 
-            meleeHitbox.knockDir = (facing == 1) ? Vector2.right : Vector2.left;
+            // 8-directional rotation based on aim
+            float angle = Mathf.Atan2(aim.y, aim.x) * Mathf.Rad2Deg;
+            meleeHitbox.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+            meleeHitbox.knockDir = aim.normalized;
         }
 
         yield return new WaitForSeconds(data.startup);
@@ -104,12 +112,12 @@ public class AttackController : MonoBehaviour
         busy = false;
     }
 
-    void FireProjectile(AttackTypeData data)
+    void FireProjectile(AttackTypeData data, bool isHeavy)
     {
         if (bulletPrefab == null || muzzle == null) return;
 
-        int facing = (move != null) ? move.Facing : 1;
-        Vector2 dir = (facing == 1) ? Vector2.right : Vector2.left;
+        Vector2 aim = (move != null) ? move.Aim : new Vector2(1, 0);
+        Vector2 dir = aim.normalized;
 
         var go = Instantiate(bulletPrefab, muzzle.position, Quaternion.identity);
         var b = go.GetComponent<Bullet2D>();

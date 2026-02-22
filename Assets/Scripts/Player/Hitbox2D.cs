@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 
 public class Hitbox2D : MonoBehaviour
@@ -13,6 +13,9 @@ public class Hitbox2D : MonoBehaviour
 
     [HideInInspector] public Vector2 knockDir = Vector2.right;
     [HideInInspector] public bool neutralStrike;
+    [HideInInspector] public bool isHeavy;
+    [HideInInspector] public bool hasCrit;
+    [HideInInspector] public bool isProjectile; // Mermi oldugunu belirtmek icin
 
     bool active;
     readonly HashSet<HealthKnockback> hitThisSwing = new();
@@ -26,7 +29,7 @@ public class Hitbox2D : MonoBehaviour
     {
         if (col == null) return;
 
-        // Hitbox objesi yer deðiþtirmesin
+        // Hitbox objesi yer deÄŸiÅŸtirmesin
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
         transform.localScale = Vector3.one;
@@ -38,6 +41,28 @@ public class Hitbox2D : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!active) return;
+
+        // Weapon Clash System
+        if (other.CompareTag("Hitbox"))
+        {
+            var otherHitbox = other.GetComponent<Hitbox2D>();
+            if (otherHitbox != null && otherHitbox != this && otherHitbox.owner != owner)
+            {
+                if (isHeavy && !otherHitbox.isHeavy) {
+                    otherHitbox.Interrupt(); // Heavy beats light
+                } else if (!isHeavy && !otherHitbox.isHeavy) {
+                    this.Interrupt(); // Light vs Light (Clash)
+                    otherHitbox.Interrupt();
+                } else if (!isHeavy && otherHitbox.isHeavy) {
+                    this.Interrupt(); // We are light, they are heavy
+                } else {
+                    this.Interrupt(); // Heavy vs Heavy (Clash)
+                    otherHitbox.Interrupt();
+                }
+            }
+            return;
+        }
+
         if (!other.CompareTag("Hurtbox")) return;
 
         var target = other.GetComponentInParent<HealthKnockback>();
@@ -48,7 +73,7 @@ public class Hitbox2D : MonoBehaviour
 
         Vector2 dirToUse = knockDir;
 
-        // Neutral vuruþta (input yokken) hedefe göre sað/sol seç
+        // Neutral vuruÅŸta (input yokken) hedefe gÃ¶re saÄŸ/sol seÃ§
         if (neutralStrike && ownerTransform != null)
         {
             float dx = target.transform.position.x - ownerTransform.position.x;
@@ -58,11 +83,44 @@ public class Hitbox2D : MonoBehaviour
         var parry = target.GetComponent<ParryState>();
         if (parry != null && parry.Active)
         {
-            if (owner != null) owner.Stun(0.25f);
+            if (owner != null) {
+                owner.Stun(0.5f); // Stun the attacker
+                var ownerParry = owner.GetComponent<ParryState>();
+                if (ownerParry != null) ownerParry.DisableParry(5f); // Opponent cant block for 5s
+            }
+            
+            // Critical on next hit for the parrier
+            var targetHitbox = target.GetComponentInChildren<Hitbox2D>(true);
+            if (targetHitbox != null) targetHitbox.hasCrit = true;
+
+            // Eger bu vurus bir mermiyse parrylendikten sonra hemen yok et
+            if (isProjectile)
+            {
+                Destroy(transform.parent != null ? transform.parent.gameObject : gameObject);
+            }
+
             return;
         }
 
-        target.TakeHit(damage, dirToUse, knockForce);
+        int finalDamage = damage;
+        if (hasCrit) {
+            finalDamage *= 2; // Critical damage
+            hasCrit = false;
+        }
+
+        // Apply Heartbeat damage multiplier (lower HP = more damage)
+        if (owner != null) {
+            float t = (owner.MaxHp - owner.CurrentHp) / (float)owner.MaxHp;
+            finalDamage = Mathf.RoundToInt(finalDamage * (1f + t)); // up to double damage at 0 HP
+        }
+
+        target.TakeHit(finalDamage, dirToUse, knockForce);
+    }
+
+    public void Interrupt() {
+        active = false;
+        if (col != null) col.enabled = false;
+        Debug.Log("Clash/Interrupt! Attacker stopped.");
     }
 
     public void BeginSwing() { active = true; hitThisSwing.Clear(); }

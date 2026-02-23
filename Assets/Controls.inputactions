@@ -313,6 +313,17 @@
                 },
                 {
                     "name": "",
+                    "id": "84fa4288-7c64-4fe1-b62b-23e5265bc4f8",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "e71d7790-6134-4a5e-8c90-e5eb738860b2",
                     "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
@@ -380,7 +391,7 @@
                 {
                     "name": "",
                     "id": "3bbdd6ea-387e-454b-9d58-f9cb6db48ac2",
-                    "path": "<Keyboard>/numpad1",
+                    "path": "<Keyboard>/numpad3",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

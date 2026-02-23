@@ -83,23 +83,44 @@ public class Hitbox2D : MonoBehaviour
         var parry = target.GetComponent<ParryState>();
         if (parry != null && parry.Active)
         {
-            if (owner != null) {
-                owner.Stun(0.5f); // Stun the attacker
-                var ownerParry = owner.GetComponent<ParryState>();
-                if (ownerParry != null) ownerParry.DisableParry(5f); // Opponent cant block for 5s
-            }
-            
-            // Critical on next hit for the parrier
-            var targetHitbox = target.GetComponentInChildren<Hitbox2D>(true);
-            if (targetHitbox != null) targetHitbox.hasCrit = true;
-
-            // Eger bu vurus bir mermiyse parrylendikten sonra hemen yok et
-            if (isProjectile)
+            bool isFacingCorrectly = true;
+            var targetController = target.GetComponent<PlayerController2D>();
+            if (targetController != null)
             {
-                Destroy(transform.parent != null ? transform.parent.gameObject : gameObject);
+                // Saldiri kaynaginin X konumu (mermiyse merminin kendisi, yakin dovusse saldirgan)
+                float sourceX = isProjectile ? transform.position.x : (ownerTransform != null ? ownerTransform.position.x : transform.position.x);
+                float targetX = target.transform.position.x;
+                
+                // Saldiri (tehdit) hedefin sagi(+) mi yoksa solu(-) mu?
+                int threatDir = (sourceX > targetX) ? 1 : -1;
+
+                if (targetController.Facing != threatDir)
+                {
+                    isFacingCorrectly = false; // Tehdide bakmiyoruz!
+                }
             }
 
-            return;
+            // Parry sadece karakter saldirgana donukse calisir
+            if (isFacingCorrectly)
+            {
+                if (owner != null) {
+                    owner.Stun(0.5f); // Stun the attacker
+                    var ownerParry = owner.GetComponent<ParryState>();
+                    if (ownerParry != null) ownerParry.DisableParry(5f); // Opponent cant block for 5s
+                }
+                
+                // Critical on next hit for the parrier
+                var targetHitbox = target.GetComponentInChildren<Hitbox2D>(true);
+                if (targetHitbox != null) targetHitbox.hasCrit = true;
+
+                // Eger bu vurus bir mermiyse parrylendikten sonra hemen yok et
+                if (isProjectile)
+                {
+                    Destroy(transform.parent != null ? transform.parent.gameObject : gameObject);
+                }
+
+                return;
+            }
         }
 
         int finalDamage = damage;
@@ -115,6 +136,12 @@ public class Hitbox2D : MonoBehaviour
         }
 
         target.TakeHit(finalDamage, dirToUse, knockForce);
+
+        // Mermi ise hedefe basariyla vurduktan sonra yok olmali
+        if (isProjectile)
+        {
+            Destroy(transform.parent != null ? transform.parent.gameObject : gameObject);
+        }
     }
 
     public void Interrupt() {

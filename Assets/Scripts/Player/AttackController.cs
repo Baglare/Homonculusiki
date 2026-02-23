@@ -44,7 +44,7 @@ public class AttackController : MonoBehaviour
         if (!v.isPressed || busy) return;
         if (weapon == null || weapon.heavy == null) return;
 
-        if (weapon.isProjectileHeavy) FireProjectile(weapon.heavy, true);
+        if (weapon.isProjectileHeavy) StartCoroutine(DoProjectile(weapon.heavy, true));
         else StartCoroutine(DoMelee(weapon.heavy, true));
     }
 
@@ -53,7 +53,7 @@ public class AttackController : MonoBehaviour
         if (!v.isPressed || busy) return;
         if (weapon == null || weapon.light == null) return;
 
-        if (weapon.isProjectileLight) FireProjectile(weapon.light, false);
+        if (weapon.isProjectileLight) StartCoroutine(DoProjectile(weapon.light, false));
         else StartCoroutine(DoMelee(weapon.light, false));
     }
 
@@ -112,16 +112,34 @@ public class AttackController : MonoBehaviour
         busy = false;
     }
 
-    void FireProjectile(AttackTypeData data, bool isHeavy)
+    IEnumerator DoProjectile(AttackTypeData data, bool isHeavy)
     {
-        if (bulletPrefab == null || muzzle == null) return;
+        busy = true;
 
-        Vector2 aim = (move != null) ? move.Aim : new Vector2(1, 0);
-        Vector2 dir = aim.normalized;
+        if (move != null)
+        {
+            Vector2 aim = move.Aim;
+            int facing = aim.x >= 0 ? 1 : -1;
+            move.facingLock = true;
+            move.lockedFacing = facing;
+        }
 
-        var go = Instantiate(bulletPrefab, muzzle.position, Quaternion.identity);
-        var b = go.GetComponent<Bullet2D>();
-        if (b != null)
-            b.Init(dir, hk, transform, data.damage, data.baseForce);
+        yield return new WaitForSeconds(data.startup);
+
+        if (bulletPrefab != null && muzzle != null)
+        {
+            Vector2 aim = (move != null) ? move.Aim : new Vector2(1, 0);
+            Vector2 dir = aim.normalized;
+
+            var go = Instantiate(bulletPrefab, muzzle.position, Quaternion.identity);
+            var b = go.GetComponent<Bullet2D>();
+            if (b != null)
+                b.Init(dir, hk, transform, data.damage, data.baseForce);
+        }
+
+        yield return new WaitForSeconds(data.active + data.recovery);
+
+        if (move != null) move.facingLock = false;
+        busy = false;
     }
 }

@@ -1,2 +1,19 @@
 fileFormatVersion: 2
 guid: 87e3be684af402143a7feab943d43165
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - move: {instanceID: 0}
+  - meleeHitbox: {instanceID: 0}
+  - meleeCollider: {instanceID: 0}
+  - parry: {instanceID: 0}
+  - hk: {instanceID: 0}
+  - weapon: {instanceID: 0}
+  - muzzle: {instanceID: 0}
+  - bulletPrefab: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
